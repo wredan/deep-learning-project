@@ -1,10 +1,15 @@
 import fiftyone as fo
+import sys
+
+if len(sys.argv) < 2:
+    print("\nThis script gets al least 1 parameters: the path of the dataset (train, test, validation)\n")
+    sys.exit(0)
 
 # The directory containing the source images
-image_path = "../deep_learning_project/EGO-CH-OBJ-ADAPT/real/training"
+image_path = sys.argv[1]
 
 # The path to the COCO labels JSON file
-labels_path = "../deep_learning_project/EGO-CH-OBJ-ADAPT/real/training/annotations.json"
+labels_path = sys.argv[1] + "/annotations.json"
 
 # Import the dataset
 dataset = fo.Dataset.from_dir(
