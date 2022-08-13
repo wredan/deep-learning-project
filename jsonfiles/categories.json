@@ -1,0 +1,84 @@
+{
+    "categories": [
+        {
+            "supercategory": "dipinto",
+            "id": 0,
+            "name": "Annunciazione"
+        },
+        {
+            "supercategory": "manoscritto",
+            "id": 1,
+            "name": "Libro d'Ore miniato"
+        },
+        {
+            "supercategory": "scultura",
+            "id": 2,
+            "name": "Lastra tombale di Giovanni Cabastida"
+        },
+        {
+            "supercategory": "scultura",
+            "id": 3,
+            "name": "Madonna del Cardillo"
+        },
+        {
+            "supercategory": "dipinto",
+            "id": 4,
+            "name": "Disputa di San Tommaso"
+        },
+        {
+            "supercategory": "dipinto",
+            "id": 5,
+            "name": "Traslazione della Santa Casa"
+        },
+        {
+            "supercategory": "scultura",
+            "id": 6,
+            "name": "Madonna col Bambino"
+        },
+        {
+            "supercategory": "dipinto",
+            "id": 7,
+            "name": "L'immacolata Concezione e Dio Padre in Gloria"
+        },
+        {
+            "supercategory": "dipinto",
+            "id": 8,
+            "name": "Adorazione dei Magi"
+        },
+        {
+            "supercategory": "dipinto",
+            "id": 9,
+            "name": "Sant'Elena e Costantino e Madonna con Bambino in gloria fra angeli"
+        },
+        {
+            "supercategory": "manoscritto",
+            "id": 10,
+            "name": "Taccuini di disegni"
+        },
+        {
+            "supercategory": "dipinto",
+            "id": 11,
+            "name": "Martirio di S. Lucia"
+        },
+        {
+            "supercategory": "scultura",
+            "id": 12,
+            "name": "Volto di Cristo"
+        },
+        {
+            "supercategory": "dipinto",
+            "id": 13,
+            "name": "Dipinti di Sant'Orsola"
+        },
+        {
+            "supercategory": "dipinto",
+            "id": 14,
+            "name": "Immacolata e i santi Chiara, Francesco, Antonio, Abate, Barbara e Maria Maddalena"
+        },
+        {
+            "supercategory": "dipinto",
+            "id": 15,
+            "name": "Storia della Genesi"
+        }
+    ]
+}
