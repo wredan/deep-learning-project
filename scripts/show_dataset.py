@@ -12,11 +12,16 @@ image_path = sys.argv[1]
 labels_path = sys.argv[1] + "/annotations.json"
 
 # Import the dataset
+if fo.core.dataset.dataset_exists("dataset"):
+    fo.core.dataset.delete_dataset("dataset")
+
 dataset = fo.Dataset.from_dir(
     dataset_type=fo.types.COCODetectionDataset,
     data_path=image_path,
     labels_path=labels_path,
-    name="EGO-CH-OBJ-ADAPT"
+    include_id=True,
+    name="dataset",
+    label_field="ground_truth"
 )
 
 session = fo.launch_app(dataset, port=5151)
