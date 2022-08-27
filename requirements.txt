@@ -1,1 +1,3 @@
-fiftyone
+torch
+pytorch-lightning
+torchvision
