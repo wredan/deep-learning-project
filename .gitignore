@@ -130,3 +130,5 @@ dmypy.json
 
 # Custom
 lightning_logs/
+EGO-CH-OBJ-ADAPT/
+CLASS-EGO-CH-OBJ-ADAPT/
