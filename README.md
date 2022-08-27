@@ -8,7 +8,7 @@ This is a deep learning project for the academic course "Deep Learning", IT depa
 Install requirements by running (python3 and pip3 required):
 
 ```bash
-  $ pip3 install -r requirements.txt
+  $ pip3 install -r ./scripts/requirements.txt
 ```
 
 Get the base dataset [here](https://iplab.dmi.unict.it/EGO-CH-OBJ-ADAPT/EGO-CH-OBJ-ADAPT.zip)
