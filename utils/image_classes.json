@@ -1,0 +1,68 @@
+{
+    "categories": [
+        {
+            "id": 0,
+            "name": "Annunciazione"
+        },
+        {
+            "id": 1,
+            "name": "Libro d'Ore miniato"
+        },
+        {
+            "id": 2,
+            "name": "Lastra tombale di Giovanni Cabastida"
+        },
+        {
+            "id": 3,
+            "name": "Madonna del Cardillo"
+        },
+        {
+            "id": 4,
+            "name": "Disputa di San Tommaso"
+        },
+        {
+            "id": 5,
+            "name": "Traslazione della Santa Casa"
+        },
+        {
+            "id": 6,
+            "name": "Madonna col Bambino"
+        },
+        {
+            "id": 7,
+            "name": "L'immacolata Concezione e Dio Padre in Gloria"
+        },
+        {
+            "id": 8,
+            "name": "Adorazione dei Magi"
+        },
+        {
+            "id": 9,
+            "name": "Sant'Elena e Costantino e Madonna con Bambino in gloria fra angeli"
+        },
+        {
+            "id": 10,
+            "name": "Taccuini di disegni"
+        },
+        {
+            "id": 11,
+            "name": "Martirio di S. Lucia"
+        },
+        {
+            "id": 12,
+            "name": "Volto di Cristo"
+        },
+        {
+            "id": 13,
+            "name": "Dipinti di Sant'Orsola"
+        },
+        {
+            "id": 14,
+            "name": "Immacolata e i santi Chiara, Francesco, Antonio, Abate, Barbara e Maria Maddalena"
+        },
+        {
+            "id": 15,
+            "name": "Storia della Genesi"
+        }
+    ]
+}
