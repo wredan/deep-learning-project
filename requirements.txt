@@ -3,3 +3,4 @@ pytorch-lightning
 torchvision
 wget
 fiftyone
+progressbar
