@@ -2,5 +2,4 @@ torch
 pytorch-lightning
 torchvision
 wget
-zipfile
 fiftyone
