@@ -7,40 +7,46 @@ class ExtractPatches():
         self.main_path = main_path
         self.save_path = save_path
 
+    def delete_dataset(self, dataset_name):
+        if fo.core.dataset.dataset_exists(dataset_name):
+            fo.core.dataset.delete_dataset(dataset_name)
+
+    def extract_database(self, image_sub_path):
+         # The path to the source images
+        image_path = self.main_path + image_sub_path
+
+        # The path to the COCO labels JSON file
+        labels_path = self.main_path + image_sub_path + "/annotations.json"
+
+        # delete if exist
+        self.delete_dataset(image_sub_path)
+
+        # Import the dataset
+        dataset = fo.Dataset.from_dir(
+            dataset_type=fo.types.COCODetectionDataset,
+            data_path=image_path,
+            labels_path=labels_path,
+            name=image_sub_path
+        )
+
+        patches = dataset.to_patches("ground_truth")
+
+        # https://voxel51.com/docs/fiftyone/api/fiftyone.types.dataset_types.html
+        # dataset_type=fo.types.FiftyOneImageClassificationDataset, patch dentro la cartella "data" + labels.json
+        # dataset_type=fo.types.ImageClassificationDirectoryTree, divide per cartelle le patch in base alla classe
+        patches.export(
+            export_dir=self.save_path + image_sub_path,
+            dataset_type=fo.types.FiftyOneImageClassificationDataset,
+            label_field="ground_truth",
+        )
+
     def extract(self):
-        for i in range(0, 5):
-            if i == 0:
-                image_sub_path = "real/test"
-            elif i == 1:
-                image_sub_path = "real/training"
-            elif i == 2:
-                image_sub_path = "syntehtic/test"
-            elif i == 3:
-                image_sub_path = "syntehtic/training"
-            elif i == 4:
-                image_sub_path = "syntehtic/validation"
+        self.extract_database("real/test")
+        self.extract_database("real/training")
+        self.extract_database("syntehtic/training")
+        self.extract_database("syntehtic/validation")
+        self.extract_database("syntehtic/test")      
 
-            # The path to the source images
-            image_path = self.main_path + image_sub_path
+            
 
-            # The path to the COCO labels JSON file
-            labels_path = self.main_path + image_sub_path + "/annotations.json"
-
-            # Import the dataset
-            dataset = fo.Dataset.from_dir(
-                dataset_type=fo.types.COCODetectionDataset,
-                data_path=image_path,
-                labels_path=labels_path,
-                name=image_sub_path
-            )
-
-            patches = dataset.to_patches("ground_truth")
-
-            # https://voxel51.com/docs/fiftyone/api/fiftyone.types.dataset_types.html
-            # dataset_type=fo.types.FiftyOneImageClassificationDataset, patch dentro la cartella "data" + labels.json
-            # dataset_type=fo.types.ImageClassificationDirectoryTree, divide per cartelle le patch in base alla classe
-            patches.export(
-                export_dir=self.save_path + image_sub_path,
-                dataset_type=fo.types.FiftyOneImageClassificationDataset,
-                label_field="ground_truth",
-            )
+           
