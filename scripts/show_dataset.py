@@ -2,7 +2,7 @@ import fiftyone as fo
 import sys
 
 if len(sys.argv) < 2:
-    print("\nThis script gets al least 1 parameters: the path of the dataset (train, test, validation)\n")
+    print("\nThis script gets 1 parameters: the path of the dataset (train, test, validation)\n")
     sys.exit(0)
 
 # The directory containing the source images
