@@ -4,3 +4,4 @@ torchvision
 wget
 fiftyone
 progressbar
+opencv-python==4.5.5.64
