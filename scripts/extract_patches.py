@@ -1,5 +1,6 @@
 
 import fiftyone as fo
+import os
 
 class ExtractPatches():
 
@@ -13,10 +14,10 @@ class ExtractPatches():
 
     def extract_database(self, image_sub_path):
          # The path to the source images
-        image_path = self.main_path + image_sub_path
+        image_path = os.path.join(self.main_path, image_sub_path)
 
         # The path to the COCO labels JSON file
-        labels_path = self.main_path + image_sub_path + "/annotations.json"
+        labels_path = os.path.join(self.main_path, image_sub_path, "/annotations.json") 
 
         # delete if exist
         self.delete_dataset(image_sub_path)
