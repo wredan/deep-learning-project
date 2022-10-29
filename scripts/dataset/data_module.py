@@ -1,4 +1,4 @@
-from sys import stderr
+import json
 from scripts.dataset.dataset import CulturalSiteDataset
 from scripts.dataset.dataset_loader import CulturalSiteDatasetsLoader
 import os
@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 import pytorch_lightning as pl
 import numpy as np
 from torch.utils.data import DataLoader
+import pandas as pd
 
 # Global Variable
 DOWNLOAD_URL = "https://iplab.dmi.unict.it/EGO-CH-OBJ-ADAPT/EGO-CH-OBJ-ADAPT.zip"
@@ -31,6 +32,14 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         self.cultural_site_train = None
         self.cultural_site_val = None
         self.cultural_site_test = None
+        self.load_class_names()
+                
+    def load_class_names(self):
+        class_file = open(os.path.join(os.getcwd(), "utils", "image_classes.json"))
+        json_class = json.load(class_file)
+        self.class_names = []
+        for el in json_class["categories"]:
+            self.class_names.append(el["name"])
     
     def prepare_data(self):
         CulturalSiteDatasetsLoader(
@@ -40,7 +49,6 @@ class CulturalSiteDataModule(pl.LightningDataModule):
             zip_file_path= ZIP_FILE_PATH)
 
     def setup(self, stage=ALL_STAGE):
-        # TODO: qui istanziare CulturalSiteDataset, creare i dataset da passare ai dataloader sotto
         # Assign train/val datasets for use in dataloaders
         if stage == CulturalSiteDataModule.FIT_STAGE or stage == CulturalSiteDataModule.ALL_STAGE:
             self.cultural_site_train = CulturalSiteDataset(
@@ -79,30 +87,18 @@ class CulturalSiteDataModule(pl.LightningDataModule):
 
     def __ds_preanalysis(self, dataset: CulturalSiteDataset, subplot, title):
         image_dataset = dataset.get_image_dataset()
+        _, counts = np.unique(image_dataset[:, 2], return_counts=True)
+        df = pd.DataFrame({
+            "Name": self.class_names,
+            "Value": counts
+        })
 
-        unique, counts = np.unique(image_dataset[:, 2], return_counts=True)
-
-        temp_plot_data = np.column_stack((unique,counts))
-        x_sorted_desc = temp_plot_data[temp_plot_data[:, 1].argsort()[::-1]]
-        temp_plot_data = np.column_stack((unique,x_sorted_desc))
-        subplot.plot(temp_plot_data[:, 0], temp_plot_data[:, 2])
-        subplot.get_xaxis().set_visible(False)
-
-        for index, value in enumerate(list(temp_plot_data)):
-            subplot.text(index + 0.2, temp_plot_data[-1][2]/2, str(value[1]))
-            if index > 0:
-                subplot.fill_between(
-                    np.array([temp_plot_data[index - 1][0], temp_plot_data[index][0]], dtype=float), 
-                    np.array([temp_plot_data[index - 1][2], temp_plot_data[index][2]], dtype=float))
-            if index == 15:
-                subplot.fill_between(
-                    np.array([temp_plot_data[index][0], temp_plot_data[index][0] + 1], dtype=float), 
-                    np.array([temp_plot_data[index][2], temp_plot_data[index][2]], dtype=float))
-
+        df_sorted = df.sort_values('Value', ascending=False)
+        subplot.tick_params(axis='x', labelrotation=45, ha="right")
+        subplot.bar('Name', 'Value', data=df_sorted)
+        subplot.grid()
         subplot.set_title(title)
         return subplot
-        # print(np.column_stack((unique,counts)))
-        # print("len: ", len(image_dataset))
 
     def filter_train(self, soglia_pixel):
         self.cultural_site_train.filter_dataset(soglia_pixel)
@@ -117,7 +113,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         prev_image = self.cultural_site_train.get_image_dataset()[0][1]
         self.cultural_site_train.resize_dataset()
         dataset = self.cultural_site_train.get_image_dataset()
-        fig, (prev_subplot, post_subplot) = plt.subplots(1, 2)
+        _, (prev_subplot, post_subplot) = plt.subplots(1, 2)
         prev_subplot.set_title("Immagine originale " + str(prev_image.shape[0]) + "x" + str(prev_image.shape[1]) + ":")
         post_subplot.set_title("Immagine dopo resize " + str(CulturalSiteDataset.RESIZE_HEIGHT) + "x" + str(CulturalSiteDataset.RESIZE_WIDTH) + ":")
         prev_subplot.imshow(prev_image)
@@ -138,7 +134,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         print()
         print(dataset[:, 1][:, 2])
         print()
-
+        
         # meanR = np.mean(dataset[:, 1][0])
         # meanG
         # meanB 
@@ -146,7 +142,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         # stdR
         # stdG 
         # stdB
-        # np.mean(l), np.std(l)
+        # np.mean((23, 213, 123)l), np.std(l)
 
     # def normalize_val(self):
     #     self.cultural_site_val.normalize_dataset()
