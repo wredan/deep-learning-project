@@ -94,7 +94,9 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         })
 
         df_sorted = df.sort_values('Value', ascending=False)
-        subplot.tick_params(axis='x', labelrotation=45, ha="right")
+        subplot.tick_params(axis='x', labelrotation=45)
+        for tick in subplot.get_xticklabels():
+            tick.set_horizontalalignment('right')
         subplot.bar('Name', 'Value', data=df_sorted)
         subplot.grid()
         subplot.set_title(title)
