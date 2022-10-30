@@ -82,7 +82,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def test_preanalysis(self, subplot, title):
         return self.__ds_preanalysis(self.cultural_site_test, subplot, title)
     
-    def get_dataset(self):
+    def get_dataset(self): #TODO: this only get traindataset, why? we should get current dataset, right? right? right?
         return self.cultural_site_train.get_image_dataset()
 
     def __ds_preanalysis(self, dataset: CulturalSiteDataset, subplot, title):
@@ -130,27 +130,15 @@ class CulturalSiteDataModule(pl.LightningDataModule):
 
     def normalize_train(self):
         dataset = self.cultural_site_train.get_image_dataset()
-        print(dataset[:, 1][:, 0])
-        print()
-        print(dataset[:, 1][:, 1])
-        print()
-        print(dataset[:, 1][:, 2])
-        print()
-        
-        # meanR = np.mean(dataset[:, 1][0])
-        # meanG
-        # meanB 
+        mean, std = self.calculate_mean_and_std(dataset)
 
-        # stdR
-        # stdG 
-        # stdB
-        # np.mean((23, 213, 123)l), np.std(l)
+    def normalize_val(self):
+        dataset = self.cultural_site_val.get_image_dataset()
+        mean, std = self.calculate_mean_and_std(dataset)
 
-    # def normalize_val(self):
-    #     self.cultural_site_val.normalize_dataset()
-
-    # def normalize_test(self):
-    #     self.cultural_site_test.normalize _dataset()
+    def normalize_test(self):
+        dataset = self.cultural_site_test.get_image_dataset()
+        mean, std = self.calculate_mean_and_std(dataset)
 
     def train_dataloader(self):
         return DataLoader(self.cultural_site_train, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True)
@@ -160,3 +148,24 @@ class CulturalSiteDataModule(pl.LightningDataModule):
 
     def test_dataloader(self):
         return DataLoader(self.cultural_site_test, batch_size=self.batch_size, num_workers=self.num_workers)
+
+    def calculate_mean_and_std(self, dataset):
+        img_dataset = np.array(dataset[:,1])
+
+        images_rgb = [np.array(img) / 255. for img in img_dataset]
+        # Each image_rgb is of shape (n, 3), 
+        # where n is the number of pixels in each image,
+        # and 3 are the channels: R, G, B.
+
+        means = []
+        for image_rgb in images_rgb:
+            means.append(np.mean(image_rgb, axis=(0,1)))
+        mean_rgb = np.mean(means, axis=0)  # mu_rgb.shape == (3,)
+
+        variances = []
+        for image_rgb in images_rgb:
+            var = np.mean((image_rgb - mean_rgb) ** 2, axis=(0,1))
+            variances.append(var)
+        std_rgb = np.sqrt(np.mean(variances, axis=0))  # std_rgb.shape == (3,)
+
+        return mean_rgb, std_rgb
