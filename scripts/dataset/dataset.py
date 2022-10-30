@@ -76,6 +76,9 @@ class CulturalSiteDataset(VisionDataset):
                 if el["name"] == self.image_dataset[i][2]:
                     self.image_dataset[i][2] = el["id"]
 
+    def set_transform(self, transform):
+        self.transform = transform
+
     def __getitem__(self, index: int):
         img = self.image_dataset[index][1]
         image_class = self.image_dataset[index][2]

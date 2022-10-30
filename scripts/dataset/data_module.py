@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 import pytorch_lightning as pl
 import numpy as np
 from torch.utils.data import DataLoader
+from torchvision import transforms
 import pandas as pd
 
 # Global Variable
@@ -58,7 +59,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
             if self.dataset_type == CulturalSiteDataModule.SYNTHETIC_DATASET:
                 self.cultural_site_val = CulturalSiteDataset(
                     dataset_base_path=BASE_CLASS_DATASETS_PATH,
-                    dataset_stage=CulturalSiteDataset.VALIDATION, 
+                    dataset_stage=CulturalSiteDataset.VALIDATION, #TODO: che succede se è nullo?
                     dataset_type=self.dataset_type)
             else:
                 self.cultural_site_val = CulturalSiteDataset(
@@ -128,17 +129,19 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def resize_test(self):
         self.cultural_site_test.resize_dataset()
 
-    def normalize_train(self):
-        dataset = self.cultural_site_train.get_image_dataset()
-        mean, std = self.calculate_mean_and_std(dataset)
-
-    def normalize_val(self):
-        dataset = self.cultural_site_val.get_image_dataset()
-        mean, std = self.calculate_mean_and_std(dataset)
-
-    def normalize_test(self):
-        dataset = self.cultural_site_test.get_image_dataset()
-        mean, std = self.calculate_mean_and_std(dataset)
+    def set_normalization_to_datasets(self):
+        mean, std = self.calculate_mean_and_std()
+        print("Mean squared error: " + str(mean))
+        print("Standard deviation: " + str(std))
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)
+        ])
+        self.cultural_site_train.set_transform(transform)
+        if(self.cultural_site_test is not None):
+            self.cultural_site_test.set_transform(transform)
+        if(self.cultural_site_val is not None):
+            self.cultural_site_val.set_transform(transform)
 
     def train_dataloader(self):
         return DataLoader(self.cultural_site_train, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True)
@@ -149,8 +152,8 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def test_dataloader(self):
         return DataLoader(self.cultural_site_test, batch_size=self.batch_size, num_workers=self.num_workers)
 
-    def calculate_mean_and_std(self, dataset):
-        img_dataset = np.array(dataset[:,1])
+    def calculate_mean_and_std(self):
+        img_dataset = np.array(self.cultural_site_train.get_image_dataset()[:,1])
 
         images_rgb = [np.array(img) / 255. for img in img_dataset]
         # Each image_rgb is of shape (n, 3), 
