@@ -121,7 +121,6 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         post_subplot.set_title("Immagine dopo resize " + str(CulturalSiteDataset.RESIZE_HEIGHT) + "x" + str(CulturalSiteDataset.RESIZE_WIDTH) + ":")
         prev_subplot.imshow(prev_image)
         post_subplot.imshow(dataset[0][1])      
-        print(dataset[0][0], dataset[0][2])      
 
     def resize_val(self):
         self.cultural_site_val.resize_dataset()
