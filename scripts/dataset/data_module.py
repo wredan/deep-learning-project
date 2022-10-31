@@ -89,7 +89,6 @@ class CulturalSiteDataModule(pl.LightningDataModule):
 
     def __ds_preanalysis(self, dataset: CulturalSiteDataset, subplot, title):
         image_dataset = dataset.get_image_dataset()
-        np_image_dataset = np.array(image_dataset)
         _, counts = np.unique(image_dataset[:, 2], return_counts=True)
         df = pd.DataFrame({
             "Name": self.class_names,
@@ -155,23 +154,32 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def test_dataloader(self):
         return DataLoader(self.cultural_site_test, batch_size=self.batch_size, num_workers=self.num_workers)
 
-    def calculate_train_mean_and_std(self):
+    def calculate_train_mean_and_std(self, resize_min_size):
         img_dataset = np.array(self.cultural_site_train.get_image_dataset()[:,1])
 
-        images_rgb = [np.array(img) / 255. for img in img_dataset]
-        # Each image_rgb is of shape (n, 3), 
-        # where n is the number of pixels in each image,
-        # and 3 are the channels: R, G, B.
+        # images_rgb = [np.array(img) / 255. for img in img_dataset]
+        # # Each image_rgb is of shape (n, 3), 
+        # # where n is the number of pixels in each image,
+        # # and 3 are the channels: R, G, B.
 
         means = []
-        for image_rgb in images_rgb:
+        for img_path in img_dataset:
+            resized_img = self.__resize_img(img_path, resize_min_size)
+            image_rgb = np.array(resized_img) / 255
             means.append(np.mean(image_rgb, axis=(0,1)))
         mean_rgb = np.mean(means, axis=0)  # mu_rgb.shape == (3,)
 
         variances = []
-        for image_rgb in images_rgb:
+        for img_path in img_dataset:
+            resized_img = self.__resize_img(img_path, resize_min_size)
+            image_rgb = np.array(resized_img) / 255
             var = np.mean((image_rgb - mean_rgb) ** 2, axis=(0,1))
             variances.append(var)
         std_rgb = np.sqrt(np.mean(variances, axis=0))  # std_rgb.shape == (3,)
 
         return mean_rgb, std_rgb
+
+    def __resize_img(self, img_path, min_size):
+        img = Image.open(img_path)
+        aspect = img.width / img.height if img.width > img.height else img.height / img.width               
+        return np.asarray(img.resize((int(min_size * aspect), min_size), Image.Resampling.BICUBIC) if img.width > img.height else img.resize((min_size, int(min_size * aspect)), Image.Resampling.BICUBIC))
