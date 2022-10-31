@@ -17,9 +17,6 @@ class CulturalSiteDataset(VisionDataset):
     REAL = "real"
     SYNTHETIC = "syntehtic"
 
-    RESIZE_HEIGHT = 32
-    RESIZE_WIDTH = 32
-
     def __init__(self, dataset_base_path, dataset_stage=TRAIN, dataset_type=SYNTHETIC_DATASET, transform: Optional[Callable] = None) -> None:
         data_domain = CulturalSiteDataset.REAL if dataset_type == CulturalSiteDataset.REAL_DATASET else CulturalSiteDataset.SYNTHETIC
         if dataset_stage == CulturalSiteDataset.TRAIN:
@@ -35,8 +32,7 @@ class CulturalSiteDataset(VisionDataset):
 
         self.image_dataset = [] # [filename, img, id_class]
         self._load_images(dataset_folder)
-        self._load_image_classes(labels_file) # todo: remove hardcode (add config file)
-        self._load_class_ids(os.path.join(os.getcwd(), "utils", "image_classes.json")) # todo: remove hardcode o salvare 
+        self._load_image_classes(labels_file, os.path.join(os.getcwd(), "utils", "image_classes.json"))
         self.image_dataset = np.array(self.image_dataset, dtype=object)
 
     def get_image_dataset(self):
@@ -49,10 +45,12 @@ class CulturalSiteDataset(VisionDataset):
         tmp = [x for x in self.image_dataset if x[1].shape[0] > soglia_pixel and x[1].shape[1] > soglia_pixel]
         self.image_dataset = np.array(tmp)
 
-    def resize_dataset(self):  
+    def resize_dataset(self, min_size):  
         resized_dataset = []     
         for el in self.image_dataset:
-            el[1] = np.asarray(Image.fromarray(el[1]).resize((CulturalSiteDataset.RESIZE_WIDTH, CulturalSiteDataset.RESIZE_HEIGHT)))
+            img = Image.fromarray(el[1])
+            aspect = img.width / img.height if img.width > img.height else img.height / img.width               
+            el[1] = np.asarray(img.resize((int(min_size * aspect), min_size), Image.Resampling.BICUBIC) if img.width > img.height else img.resize((min_size, int(min_size * aspect)), Image.Resampling.BICUBIC))
             resized_dataset.append(el)
         self.image_dataset = np.array(resized_dataset)
 
@@ -62,19 +60,13 @@ class CulturalSiteDataset(VisionDataset):
             im = Image.open(os.path.join(path, filename))
             self.image_dataset.append([filename.removesuffix(suffix), np.asarray(im), None ])
 
-    def _load_image_classes(self, path):
-        file = open(path)
-        content = json.load(file)
-        for el in self.image_dataset:
-            el[2] = content["labels"][el[0]]
-
-    def _load_class_ids(self, path):  # TODO: è possibile fare tutto in un unico passaggio nella funzione sopra, da sistemare
-        file = open(path)
-        content = json.load(file)
-        for i in range(len(self.image_dataset)):
-            for el in content["categories"]:
-                if el["name"] == self.image_dataset[i][2]:
-                    self.image_dataset[i][2] = el["id"]
+    def _load_image_classes(self, labels_path, class_ids_path):
+        labels_content = json.load(open(labels_path))
+        ids_content = json.load(open(class_ids_path))
+        for img in self.image_dataset:
+            for class_el in ids_content["categories"]:
+                if class_el["name"] == labels_content["labels"][img[0]]:
+                     img[2] = class_el["id"]
 
     def set_transform(self, transform):
         self.transform = transform
@@ -82,7 +74,6 @@ class CulturalSiteDataset(VisionDataset):
     def __getitem__(self, index: int):
         img = self.image_dataset[index][1]
         image_class = self.image_dataset[index][2]
-        img = Image.fromarray(img)
         if self.transform is not None:
             img = self.transform(img)
         return img, image_class

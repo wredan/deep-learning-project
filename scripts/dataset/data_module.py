@@ -8,6 +8,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torchvision import transforms
 import pandas as pd
+from PIL import Image
 
 # Global Variable
 DOWNLOAD_URL = "https://iplab.dmi.unict.it/EGO-CH-OBJ-ADAPT/EGO-CH-OBJ-ADAPT.zip"
@@ -88,6 +89,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
 
     def __ds_preanalysis(self, dataset: CulturalSiteDataset, subplot, title):
         image_dataset = dataset.get_image_dataset()
+        np_image_dataset = np.array(image_dataset)
         _, counts = np.unique(image_dataset[:, 2], return_counts=True)
         df = pd.DataFrame({
             "Name": self.class_names,
@@ -112,34 +114,31 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def filter_test(self, soglia_pixel):
         self.cultural_site_test.filter_dataset(soglia_pixel)
 
-    def resize_train(self):
+    def resize_train(self, min_size):
         prev_image = self.cultural_site_train.get_image_dataset()[0][1]
-        self.cultural_site_train.resize_dataset()
-        dataset = self.cultural_site_train.get_image_dataset()
+        self.cultural_site_train.resize_dataset(min_size)
+        post_image = self.cultural_site_train.get_image_dataset()[0][1]
         _, (prev_subplot, post_subplot) = plt.subplots(1, 2)
         prev_subplot.set_title("Immagine originale " + str(prev_image.shape[0]) + "x" + str(prev_image.shape[1]) + ":")
-        post_subplot.set_title("Immagine dopo resize " + str(CulturalSiteDataset.RESIZE_HEIGHT) + "x" + str(CulturalSiteDataset.RESIZE_WIDTH) + ":")
+        post_subplot.set_title("Immagine dopo resize " + str(post_image.shape[0]) + "x" + str(post_image.shape[1]) + ":")
         prev_subplot.imshow(prev_image)
-        post_subplot.imshow(dataset[0][1])      
+        post_subplot.imshow(post_image)
 
-    def resize_val(self):
-        self.cultural_site_val.resize_dataset()
+    def resize_val(self, min_size):
+        self.cultural_site_val.resize_dataset(min_size)
 
-    def resize_test(self):
-        self.cultural_site_test.resize_dataset()
+    def resize_test(self, min_size):
+        self.cultural_site_test.resize_dataset(min_size)
 
-    def set_normalization_to_datasets(self):
-        mean, std = self.calculate_mean_and_std()
-        print("Mean squared error: " + str(mean))
-        print("Standard deviation: " + str(std))
-        transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize(mean, std)
-        ])
+    def set_train_trasform(self, transform):
         self.cultural_site_train.set_transform(transform)
+        
+    def set_val_trasform(self, transform):
         if(self.cultural_site_test is not None):
             self.cultural_site_test.set_transform(transform)
-        if(self.cultural_site_val is not None):
+    
+    def set_test_trasform(self, transform):
+         if(self.cultural_site_val is not None):
             self.cultural_site_val.set_transform(transform)
 
     def train_dataloader(self):
@@ -151,7 +150,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def test_dataloader(self):
         return DataLoader(self.cultural_site_test, batch_size=self.batch_size, num_workers=self.num_workers)
 
-    def calculate_mean_and_std(self):
+    def calculate_train_mean_and_std(self):
         img_dataset = np.array(self.cultural_site_train.get_image_dataset()[:,1])
 
         images_rgb = [np.array(img) / 255. for img in img_dataset]
