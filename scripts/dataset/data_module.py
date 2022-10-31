@@ -96,6 +96,11 @@ class CulturalSiteDataModule(pl.LightningDataModule):
             "Value": counts
         })
 
+        text_limit = 25
+
+        df["Name"] = [label_text[:text_limit] + (label_text[text_limit:] and '..') for label_text in df["Name"]]
+
+
         df_sorted = df.sort_values('Value', ascending=False)
         subplot.tick_params(axis='x', labelrotation=45)
         for tick in subplot.get_xticklabels():
