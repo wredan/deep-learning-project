@@ -133,4 +133,3 @@ lightning_logs/
 EGO-CH-OBJ-ADAPT/
 CLASS-EGO-CH-OBJ-ADAPT/
 *.zip
-tb_logs/**
