@@ -141,16 +141,17 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         self.cultural_site_test.resize_dataset(min_size)
 
     def set_train_trasform(self, transform):
-        self.cultural_site_train.set_transform(transform)
-        
+        if(self.cultural_site_train is not None):
+            self.cultural_site_train.set_transform(transform)
+    
     def set_val_trasform(self, transform):
+         if(self.cultural_site_val is not None):
+            self.cultural_site_val.set_transform(transform)
+        
+    def set_test_trasform(self, transform):
         if(self.cultural_site_test is not None):
             self.cultural_site_test.set_transform(transform)
     
-    def set_test_trasform(self, transform):
-         if(self.cultural_site_val is not None):
-            self.cultural_site_val.set_transform(transform)
-
     def train_dataloader(self):
         return DataLoader(self.cultural_site_train, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True)
 
