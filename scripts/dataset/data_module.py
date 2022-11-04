@@ -84,8 +84,14 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def test_preanalysis(self, subplot, title):
         return self.__ds_preanalysis(self.cultural_site_test, subplot, title)
     
-    def get_dataset(self): #TODO: this only get traindataset, why? we should get current dataset, right? right? right?
+    def get_train_dataset(self):
         return self.cultural_site_train.get_image_dataset()
+
+    def get_val_dataset(self):
+        return self.cultural_site_val.get_image_dataset()
+
+    def get_test_dataset(self):
+        return self.cultural_site_test.get_image_dataset()
 
     def __ds_preanalysis(self, dataset: CulturalSiteDataset, subplot, title):
         image_dataset = dataset.get_image_dataset()
