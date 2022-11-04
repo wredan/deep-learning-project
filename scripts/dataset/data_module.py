@@ -189,4 +189,4 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def __resize_img(self, img_path, min_size):
         img = Image.open(img_path)
         aspect = img.width / img.height if img.width > img.height else img.height / img.width               
-        return np.asarray(img.resize((int(min_size * aspect), min_size), Image.Resampling.BICUBIC) if img.width > img.height else img.resize((min_size, int(min_size * aspect)), Image.Resampling.BICUBIC))
+        return np.asarray(img.resize((int(min_size * aspect), min_size), Image.BICUBIC) if img.width > img.height else img.resize((min_size, int(min_size * aspect)), Image.BICUBIC))
