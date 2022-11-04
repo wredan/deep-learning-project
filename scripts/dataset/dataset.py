@@ -17,29 +17,32 @@ class CulturalSiteDataset(VisionDataset):
     REAL = "real"
     SYNTHETIC = "syntehtic"
 
-    def __init__(self, dataset_base_path, dataset_stage=TRAIN, dataset_type=SYNTHETIC_DATASET, transform: Optional[Callable] = None) -> None:
-        data_domain = CulturalSiteDataset.REAL if dataset_type == CulturalSiteDataset.REAL_DATASET else CulturalSiteDataset.SYNTHETIC
-        if dataset_stage == CulturalSiteDataset.TRAIN:
-            dataset_folder = os.path.join(dataset_base_path, data_domain, 'training', 'data')
-            labels_file = os.path.join(dataset_base_path, data_domain, 'training', 'labels.json')
-        elif dataset_stage == CulturalSiteDataset.VALIDATION and dataset_type != CulturalSiteDataset.REAL_DATASET:
-            dataset_folder = os.path.join(dataset_base_path, data_domain, 'validation', 'data')
-            labels_file = os.path.join(dataset_base_path, data_domain, 'validation', 'labels.json')
-        elif dataset_stage == CulturalSiteDataset.TEST or dataset_type == CulturalSiteDataset.REAL_DATASET:
-            dataset_folder = os.path.join(dataset_base_path, data_domain, 'test', 'data')
-            labels_file = os.path.join(dataset_base_path, data_domain, 'test', 'labels.json') 
-        super().__init__(root = dataset_folder, transform = transform, target_transform=None)
+    def __init__(self, dataset_base_path=None, dataset_stage=TRAIN, dataset_type=SYNTHETIC_DATASET, transform: Optional[Callable] = None) -> None:
+        if dataset_base_path is not None:
+            data_domain = CulturalSiteDataset.REAL if dataset_type == CulturalSiteDataset.REAL_DATASET else CulturalSiteDataset.SYNTHETIC
+            if dataset_stage == CulturalSiteDataset.TRAIN:
+                dataset_folder = os.path.join(dataset_base_path, data_domain, 'training', 'data')
+                labels_file = os.path.join(dataset_base_path, data_domain, 'training', 'labels.json')
+            elif dataset_stage == CulturalSiteDataset.VALIDATION and dataset_type != CulturalSiteDataset.REAL_DATASET:
+                dataset_folder = os.path.join(dataset_base_path, data_domain, 'validation', 'data')
+                labels_file = os.path.join(dataset_base_path, data_domain, 'validation', 'labels.json')
+            elif dataset_stage == CulturalSiteDataset.TEST or dataset_type == CulturalSiteDataset.REAL_DATASET:
+                dataset_folder = os.path.join(dataset_base_path, data_domain, 'test', 'data')
+                labels_file = os.path.join(dataset_base_path, data_domain, 'test', 'labels.json') 
+            super().__init__(root = dataset_folder, transform = transform, target_transform=None)
 
-        self.image_dataset = [] # [filename, img, id_class]
-        self._load_images_path(dataset_folder)
-        self._load_image_classes(labels_file, os.path.join(os.getcwd(), "utils", "image_classes.json"))
-        self.image_dataset = np.array(self.image_dataset, dtype=object)
+            self.image_dataset = [] # [filename, img, id_class]
+            self._load_images_path(dataset_folder)
+            self._load_image_classes(labels_file, os.path.join(os.getcwd(), "utils", "image_classes.json"))
+            self.image_dataset = np.array(self.image_dataset, dtype=object)
+        else:
+            self.image_dataset = []
 
     def get_image_dataset(self):
         return self.image_dataset
 
-    def set_image_dataset(self):
-        return self.image_dataset
+    def set_image_dataset(self, image_dataset):
+        self.image_dataset = np.array(image_dataset)
 
     def __check_filter_size(self, img_path, soglia_pixel):
         w, h = Image.open(img_path).size

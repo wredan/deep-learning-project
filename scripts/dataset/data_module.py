@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 import pandas as pd
 from PIL import Image
+from sklearn.model_selection import train_test_split
 
 # Global Variable
 DOWNLOAD_URL = "https://iplab.dmi.unict.it/EGO-CH-OBJ-ADAPT/EGO-CH-OBJ-ADAPT.zip"
@@ -51,24 +52,46 @@ class CulturalSiteDataModule(pl.LightningDataModule):
             zip_file_path= ZIP_FILE_PATH)
 
     def setup(self, stage=ALL_STAGE):
-        # Assign train/val datasets for use in dataloaders
+        # Assign train/val/test datasets for use in dataloaders
+        if self.dataset_type == CulturalSiteDataModule.SYNTHETIC_DATASET:
+            self.setup_synthetic(stage)
+        elif self.dataset_type == CulturalSiteDataModule.REAL_DATASET:
+            self.setup_real(stage)
+    
+    def setup_synthetic(self, stage):
         if stage == CulturalSiteDataModule.FIT_STAGE or stage == CulturalSiteDataModule.ALL_STAGE:
             self.cultural_site_train = CulturalSiteDataset(
                 dataset_base_path=BASE_CLASS_DATASETS_PATH,
                 dataset_stage=CulturalSiteDataset.TRAIN, 
                 dataset_type=self.dataset_type)
-            if self.dataset_type == CulturalSiteDataModule.SYNTHETIC_DATASET:
-                self.cultural_site_val = CulturalSiteDataset(
-                    dataset_base_path=BASE_CLASS_DATASETS_PATH,
-                    dataset_stage=CulturalSiteDataset.VALIDATION, #TODO: che succede se è nullo?
-                    dataset_type=self.dataset_type)
-            else:
-                self.cultural_site_val = CulturalSiteDataset(
-                    dataset_base_path=BASE_CLASS_DATASETS_PATH,
-                    dataset_stage=CulturalSiteDataset.TEST, 
-                    dataset_type=self.dataset_type)
+            
+            self.cultural_site_val = CulturalSiteDataset(
+                dataset_base_path=BASE_CLASS_DATASETS_PATH,
+                dataset_stage=CulturalSiteDataset.VALIDATION,
+                dataset_type=self.dataset_type)
 
-        # Assign test dataset for use in dataloader(s)
+        if stage == CulturalSiteDataModule.TEST_STAGE or stage == CulturalSiteDataModule.ALL_STAGE:
+            self.cultural_site_test = CulturalSiteDataset(
+                dataset_base_path=BASE_CLASS_DATASETS_PATH,
+                dataset_stage=CulturalSiteDataset.TEST, 
+                dataset_type=self.dataset_type)
+    
+    def setup_real(self, stage):
+        if stage == CulturalSiteDataModule.FIT_STAGE or stage == CulturalSiteDataModule.ALL_STAGE:
+            self.cultural_site_train = CulturalSiteDataset(
+                dataset_base_path=BASE_CLASS_DATASETS_PATH,
+                dataset_stage=CulturalSiteDataset.TRAIN, 
+                dataset_type=self.dataset_type)
+            
+            train_set = self.cultural_site_train.get_image_dataset()
+            new_train_set, new_validation_set = train_test_split(train_set, test_size = 0.1) # splitting train ratio 90/10
+            self.cultural_site_train.set_image_dataset(new_train_set)
+            
+            self.cultural_site_val = CulturalSiteDataset(
+                dataset_stage=CulturalSiteDataset.VALIDATION,
+                dataset_type=self.dataset_type)
+            self.cultural_site_val.set_image_dataset(new_validation_set)
+
         if stage == CulturalSiteDataModule.TEST_STAGE or stage == CulturalSiteDataModule.ALL_STAGE:
             self.cultural_site_test = CulturalSiteDataset(
                 dataset_base_path=BASE_CLASS_DATASETS_PATH,
