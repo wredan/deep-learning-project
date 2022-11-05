@@ -22,7 +22,7 @@ class CulturalSiteDataModuleGAN(pl.LightningDataModule):
         self.cultural_site_test = None            
 
     def setup(self, stage=ALL_STAGE):
-        if stage==CulturalSiteDataModuleGAN.FIT_STAGE and stage==CulturalSiteDataModuleGAN.ALL_STAGE:
+        if stage==CulturalSiteDataModuleGAN.FIT_STAGE or stage==CulturalSiteDataModuleGAN.ALL_STAGE:
             train_transform = transforms.Compose([
                 transforms.Resize(256, Image.BICUBIC), #ridimensioniamo a una dimensione più grande di quella di input
                 transforms.RandomCrop(224), #random crop alla dimensione di input
@@ -38,7 +38,7 @@ class CulturalSiteDataModuleGAN(pl.LightningDataModule):
                 transform= train_transform,
                 mode=CulturalSiteDatasetGAN.TRAIN)
 
-        if stage==CulturalSiteDataModuleGAN.TEST_STAGE and stage==CulturalSiteDataModuleGAN.ALL_STAGE:
+        if stage==CulturalSiteDataModuleGAN.TEST_STAGE or stage==CulturalSiteDataModuleGAN.ALL_STAGE:
             test_transform = transforms.Compose([
                 transforms.Resize(256, Image.BICUBIC),
                 transforms.CenterCrop(224),                                                         
