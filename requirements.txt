@@ -1,6 +1,7 @@
 torch
 pytorch-lightning
 torchvision
+torchsummary
 wget
 fiftyone
 progressbar
