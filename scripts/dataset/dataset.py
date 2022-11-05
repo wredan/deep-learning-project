@@ -44,15 +44,15 @@ class CulturalSiteDataset(VisionDataset):
     def set_image_dataset(self, image_dataset):
         self.image_dataset = np.array(image_dataset)
 
-    def __check_filter_size(self, img_path, soglia_pixel):
+    def __check_filter_size(self, img_path, pixel_threshold):
         w, h = Image.open(img_path).size
-        return w > soglia_pixel and h > soglia_pixel
+        return w > pixel_threshold and h > pixel_threshold
 
-    def filter_dataset(self, soglia_pixel):
-        tmp = [x for x in self.image_dataset if self.__check_filter_size(x[1], soglia_pixel)]
+    def filter_dataset(self, pixel_threshold):
+        tmp = [x for x in self.image_dataset if self.__check_filter_size(x[1], pixel_threshold)]
         self.image_dataset = np.array(tmp)
 
-    def resize_dataset(self, min_size):  
+    def resize_dataset(self, min_size):  # TODO: da rimuovere, non utilizzato
         resized_dataset = []     
         for el in self.image_dataset:
             img = Image.open(el[1])

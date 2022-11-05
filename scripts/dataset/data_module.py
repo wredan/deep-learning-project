@@ -138,16 +138,16 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         subplot.set_title(title)
         return subplot
 
-    def filter_train(self, soglia_pixel):
-        self.cultural_site_train.filter_dataset(soglia_pixel)
+    def filter_train(self, pixel_threshold):
+        self.cultural_site_train.filter_dataset(pixel_threshold)
 
-    def filter_val(self, soglia_pixel):
-        self.cultural_site_val.filter_dataset(soglia_pixel)
+    def filter_val(self, pixel_threshold):
+        self.cultural_site_val.filter_dataset(pixel_threshold)
 
-    def filter_test(self, soglia_pixel):
-        self.cultural_site_test.filter_dataset(soglia_pixel)
+    def filter_test(self, pixel_threshold):
+        self.cultural_site_test.filter_dataset(pixel_threshold)
 
-    def resize_train(self, min_size):
+    def resize_train(self, min_size): # TODO: da rimuovere, non utilizzato
         prev_image = self.cultural_site_train.get_image_dataset()[0][1]
         self.cultural_site_train.resize_dataset(min_size)
         post_image = self.cultural_site_train.get_image_dataset()[0][1]
@@ -157,10 +157,10 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         prev_subplot.imshow(prev_image)
         post_subplot.imshow(post_image)
 
-    def resize_val(self, min_size):
+    def resize_val(self, min_size): # TODO: da rimuovere, non utilizzato
         self.cultural_site_val.resize_dataset(min_size)
 
-    def resize_test(self, min_size):
+    def resize_test(self, min_size): # TODO: da rimuovere, non utilizzato
         self.cultural_site_test.resize_dataset(min_size)
 
     def set_train_trasform(self, transform):

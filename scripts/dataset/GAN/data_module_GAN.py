@@ -52,11 +52,11 @@ class CulturalSiteDataModuleGAN(pl.LightningDataModule):
                 transform= test_transform,
                 mode=CulturalSiteDatasetGAN.TEST)
 
-    def filter_train(self, soglia_pixel):
-        self.cultural_site_train.filter_dataset(soglia_pixel)
+    def filter_train(self, pixel_threshold):
+        self.cultural_site_train.filter_dataset(pixel_threshold)
 
-    def filter_test(self, soglia_pixel):
-        self.cultural_site_test.filter_dataset(soglia_pixel)
+    def filter_test(self, pixel_threshold):
+        self.cultural_site_test.filter_dataset(pixel_threshold)
     
     def train_dataloader(self):
         return DataLoader(self.cultural_site_train, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True)
