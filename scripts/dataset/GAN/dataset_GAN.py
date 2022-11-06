@@ -19,7 +19,6 @@ class CulturalSiteDatasetGAN(Dataset):
         # ottieni i path delle immagini in A e B
         self.images_path_syn = sorted(glob.glob(os.path.join(dataset_base_path, CulturalSiteDatasetGAN.SYNTHETIC, '%s' % mode, 'data') + '/*.*'))
         self.images_path_real = sorted(glob.glob(os.path.join(dataset_base_path, CulturalSiteDatasetGAN.REAL, '%s' % mode, 'data') + '/*.*'))
-        print(len(self.images_path_syn), len(self.images_path_real))
 
     def __check_filter_size(self, img_path, pixel_threshold):
         w, h = Image.open(img_path).size
