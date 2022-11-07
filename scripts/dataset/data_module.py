@@ -1,4 +1,5 @@
 import json
+from scripts.CycleGAN.model import CycleGAN
 from scripts.dataset.dataset import CulturalSiteDataset
 from scripts.dataset.dataset_loader import CulturalSiteDatasetsLoader
 import os
@@ -184,7 +185,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def test_dataloader(self):
         return DataLoader(self.cultural_site_test, batch_size=self.batch_size, num_workers=self.num_workers)
 
-    def calculate_train_mean_and_std(self, resize_min_size):
+    def calculate_train_mean_and_std(self, resize_min_size, cycle_GAN_ckpt_path=None):
         img_dataset = np.array(self.cultural_site_train.get_image_dataset()[:,1])
 
         # images_rgb = [np.array(img) / 255. for img in img_dataset]
@@ -192,9 +193,14 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         # # where n is the number of pixels in each image,
         # # and 3 are the channels: R, G, B.
 
+        if cycle_GAN_ckpt_path:
+            model = CycleGAN.load_from_checkpoint(cycle_GAN_ckpt_path)
+
         means = []
         for img_path in img_dataset:
             resized_img = self.__resize_img(img_path, resize_min_size)
+            if cycle_GAN_ckpt_path:
+                resized_img = model(resized_img, CycleGAN.A2B)
             image_rgb = np.array(resized_img) / 255
             means.append(np.mean(image_rgb, axis=(0,1)))
         mean_rgb = np.mean(means, axis=0)  # mu_rgb.shape == (3,)
@@ -202,6 +208,8 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         variances = []
         for img_path in img_dataset:
             resized_img = self.__resize_img(img_path, resize_min_size)
+            if cycle_GAN_ckpt_path:
+                resized_img = model(resized_img, CycleGAN.A2B)
             image_rgb = np.array(resized_img) / 255
             var = np.mean((image_rgb - mean_rgb) ** 2, axis=(0,1))
             variances.append(var)
