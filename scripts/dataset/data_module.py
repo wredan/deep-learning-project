@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import pytorch_lightning as pl
 import numpy as np
 from torch.utils.data import DataLoader
-from torchvision import transforms
+import torch
 import pandas as pd
 from PIL import Image
 from sklearn.model_selection import train_test_split
@@ -200,7 +200,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         for img_path in img_dataset:
             resized_img = self.__resize_img(img_path, resize_min_size)
             if cycle_GAN_ckpt_path:
-                resized_img = model(resized_img, CycleGAN.A2B)
+                resized_img = model(torch.from_numpy(resized_img), CycleGAN.A2B).numpy()
             image_rgb = np.array(resized_img) / 255
             means.append(np.mean(image_rgb, axis=(0,1)))
         mean_rgb = np.mean(means, axis=0)  # mu_rgb.shape == (3,)
@@ -209,7 +209,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
         for img_path in img_dataset:
             resized_img = self.__resize_img(img_path, resize_min_size)
             if cycle_GAN_ckpt_path:
-                resized_img = model(resized_img, CycleGAN.A2B)
+                resized_img = model(torch.from_numpy(resized_img), CycleGAN.A2B).numpy()
             image_rgb = np.array(resized_img) / 255
             var = np.mean((image_rgb - mean_rgb) ** 2, axis=(0,1))
             variances.append(var)
@@ -220,4 +220,4 @@ class CulturalSiteDataModule(pl.LightningDataModule):
     def __resize_img(self, img_path, min_size):
         img = Image.open(img_path)
         aspect = img.width / img.height if img.width > img.height else img.height / img.width               
-        return np.asarray(img.resize((int(min_size * aspect), min_size), transforms.InterpolationMode.BICUBIC) if img.width > img.height else img.resize((min_size, int(min_size * aspect)), transforms.InterpolationMode.BICUBIC))
+        return np.asarray(img.resize((int(min_size * aspect), min_size), Image.BICUBIC) if img.width > img.height else img.resize((min_size, int(min_size * aspect)), Image.BICUBIC))
