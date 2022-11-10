@@ -26,6 +26,7 @@ class CulturalSiteDataModule(pl.LightningDataModule):
 
     REAL_DATASET = 0
     SYNTHETIC_DATASET = 1
+    SYNTHETIC_REAL_DATASET = 2
 
     def __init__(self, batch_size, dataset_type, num_classes, num_workers= 1):
         super().__init__()
@@ -58,6 +59,8 @@ class CulturalSiteDataModule(pl.LightningDataModule):
             self.setup_synthetic(stage)
         elif self.dataset_type == CulturalSiteDataModule.REAL_DATASET:
             self.setup_real(stage)
+        elif self.dataset_type == CulturalSiteDataModule.SYNTHETIC_REAL_DATASET:
+            self.setup_synthetic_real(stage)
     
     def setup_synthetic(self, stage):
         if stage == CulturalSiteDataModule.FIT_STAGE or stage == CulturalSiteDataModule.ALL_STAGE:
@@ -98,6 +101,24 @@ class CulturalSiteDataModule(pl.LightningDataModule):
                 dataset_base_path=BASE_CLASS_DATASETS_PATH,
                 dataset_stage=CulturalSiteDataset.TEST, 
                 dataset_type=self.dataset_type)
+
+    def setup_synthetic_real(self, stage):
+        if stage == CulturalSiteDataModule.FIT_STAGE or stage == CulturalSiteDataModule.ALL_STAGE:
+            self.cultural_site_train = CulturalSiteDataset(
+                dataset_base_path=BASE_CLASS_DATASETS_PATH,
+                dataset_stage=CulturalSiteDataset.TRAIN, 
+                dataset_type= CulturalSiteDataModule.SYNTHETIC_DATASET)
+            
+            self.cultural_site_val = CulturalSiteDataset(
+                dataset_base_path=BASE_CLASS_DATASETS_PATH,
+                dataset_stage=CulturalSiteDataset.TRAIN,
+                dataset_type= CulturalSiteDataModule.REAL_DATASET)
+
+        if stage == CulturalSiteDataModule.TEST_STAGE or stage == CulturalSiteDataModule.ALL_STAGE:
+            self.cultural_site_test = CulturalSiteDataset(
+                dataset_base_path=BASE_CLASS_DATASETS_PATH,
+                dataset_stage=CulturalSiteDataset.TEST, 
+                dataset_type= CulturalSiteDataModule.REAL_DATASET)
     
     def train_preanalysis(self, subplot, title):
         return self.__ds_preanalysis(self.cultural_site_train, subplot, title)
