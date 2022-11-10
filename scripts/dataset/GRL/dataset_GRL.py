@@ -85,6 +85,9 @@ class CulturalSiteDatasetGRL(Dataset):
         tmp = [x for x in self.real_image_dataset if self.__check_filter_size(x, pixel_threshold)]
         self.real_image_dataset = tmp
 
+    def set_transform(self, transform):
+        self.transform = transform
+
     def __getitem__(self, index: int):
         _, syn_img_path, syn_img_class = self.syn_image_dataset[index]
         _, real_img_path, _ = self.real_image_dataset[random.randint(0, len(self.target)-1)]
