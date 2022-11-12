@@ -72,8 +72,11 @@ class CulturalSiteDataModuleGRL(pl.LightningDataModule):
         if(self.cultural_site_test is not None):
             self.cultural_site_test.set_transform(transform)
 
-    def calculate_train_mean_and_std(self, resize_min_size):
-        img_dataset = np.array([self.cultural_site_train.get_syn_image_dataset()[:,1], self.cultural_site_train.get_syn_image_dataset()[:,1]])
+    def calculate_train_mean_and_std(self, resize_min_size, img_dataset=None):
+        # images_rgb = [np.array(img) / 255. for img in img_dataset]
+        # # Each image_rgb is of shape (n, 3), 
+        # # where n is the number of pixels in each image,
+        # # and 3 are the channels: R, G, B.
         means = []
         for img_path in img_dataset:
             resized_img = self.__resize_img(img_path, resize_min_size)
