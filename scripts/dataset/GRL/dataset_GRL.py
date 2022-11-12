@@ -17,18 +17,18 @@ class CulturalSiteDatasetGRL(Dataset):
     SYNTHETIC = "syntehtic"
 
     def __init__(self, dataset_base_path=None, dataset_stage=TRAIN, transform: Optional[Callable] = None) -> None:
-            if dataset_base_path is not None:
-                self.transform = transform
-                if dataset_stage == CulturalSiteDatasetGRL.TRAIN or dataset_stage == CulturalSiteDatasetGRL.TEST:
-                    dataset_folder_syn, labels_file_syn, dataset_folder_real, labels_file_real = self.__get_train_or_test_path(dataset_base_path, dataset_stage)
-                    self.load_datasets(dataset_folder_syn, labels_file_syn, dataset_folder_real, labels_file_real)
-                elif dataset_stage == CulturalSiteDatasetGRL.VALIDATION:
-                    dataset_folder_syn = os.path.join(dataset_base_path, CulturalSiteDatasetGRL.SYNTHETIC, 'validation', 'data')
-                    labels_file_syn = os.path.join(dataset_base_path, CulturalSiteDatasetGRL.SYNTHETIC, 'validation', 'labels.json')
-                    self.load_datasets(dataset_folder_syn, labels_file_syn)
-            else:
-                self.syn_image_dataset = []
-                self.real_image_dataset = []
+        if dataset_base_path:
+            self.transform = transform
+            if dataset_stage == CulturalSiteDatasetGRL.TRAIN or dataset_stage == CulturalSiteDatasetGRL.TEST:
+                dataset_folder_syn, labels_file_syn, dataset_folder_real, labels_file_real = self.__get_train_or_test_path(dataset_base_path, dataset_stage)
+                self.load_datasets(dataset_folder_syn, labels_file_syn, dataset_folder_real, labels_file_real)
+            elif dataset_stage == CulturalSiteDatasetGRL.VALIDATION:
+                dataset_folder_syn = os.path.join(dataset_base_path, CulturalSiteDatasetGRL.SYNTHETIC, 'validation', 'data')
+                labels_file_syn = os.path.join(dataset_base_path, CulturalSiteDatasetGRL.SYNTHETIC, 'validation', 'labels.json')
+                self.load_datasets(dataset_folder_syn, labels_file_syn)
+        else:
+            self.syn_image_dataset = []
+            self.real_image_dataset = []
 
     def __get_train_or_test_path(self, dataset_base_path, mode):
         dataset_folder_syn = os.path.join(dataset_base_path, CulturalSiteDatasetGRL.SYNTHETIC, '%s' % mode, 'data')
@@ -80,9 +80,9 @@ class CulturalSiteDatasetGRL(Dataset):
         return w > pixel_threshold and h > pixel_threshold
 
     def filter_dataset(self, pixel_threshold):
-        tmp = [x for x in self.syn_image_dataset if self.__check_filter_size(x, pixel_threshold)]
+        tmp = [x for x in self.syn_image_dataset if self.__check_filter_size(x[1], pixel_threshold)]
         self.syn_image_dataset = tmp
-        tmp = [x for x in self.real_image_dataset if self.__check_filter_size(x, pixel_threshold)]
+        tmp = [x for x in self.real_image_dataset if self.__check_filter_size(x[1], pixel_threshold)]
         self.real_image_dataset = tmp
 
     def set_transform(self, transform):
