@@ -6,6 +6,8 @@ from torchvision import transforms
 from sklearn.model_selection import train_test_split
 import numpy as np
 from PIL import Image
+
+from scripts.dataset.dataset import CulturalSiteDataset
 # Global Variable
 BASE_CLASS_DATASETS_PATH = os.path.join(os.getcwd(), 'CLASS-EGO-CH-OBJ-ADAPT')
 
@@ -32,15 +34,16 @@ class CulturalSiteDataModuleGRL(pl.LightningDataModule):
             new_train_set, new_validation_set = train_test_split(train_set, test_size = 0.1) # splitting train ratio 90/10
             self.cultural_site_train.set_real_image_dataset(new_train_set)
             
-            self.cultural_site_val = CulturalSiteDatasetGRL(
-                dataset_base_path=BASE_CLASS_DATASETS_PATH,
-                dataset_stage=CulturalSiteDatasetGRL.VALIDATION)
-            self.cultural_site_val.set_real_image_dataset(new_validation_set)
+            self.cultural_site_val = CulturalSiteDataset(
+                dataset_stage=CulturalSiteDataset.VALIDATION,
+                dataset_type= CulturalSiteDataset.REAL_DATASET)
+            self.cultural_site_val.set_image_dataset(new_validation_set)
 
-        if stage==CulturalSiteDataModuleGRL.TEST_STAGE or stage==CulturalSiteDataModuleGRL.ALL_STAGE:
-            self.cultural_site_test = CulturalSiteDatasetGRL(
+        if stage == CulturalSiteDataModuleGRL.TEST_STAGE or stage == CulturalSiteDataModuleGRL.ALL_STAGE:
+            self.cultural_site_test = CulturalSiteDataset(
                 dataset_base_path=BASE_CLASS_DATASETS_PATH,
-                dataset_stage=CulturalSiteDatasetGRL.TEST)
+                dataset_stage=CulturalSiteDataset.TEST, 
+                dataset_type=CulturalSiteDataset.REAL_DATASET)
 
     def filter_train(self, pixel_threshold):
         self.cultural_site_train.filter_dataset(pixel_threshold)

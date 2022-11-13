@@ -90,7 +90,7 @@ class CulturalSiteDatasetGRL(Dataset):
 
     def __getitem__(self, index: int):
         _, syn_img_path, syn_img_class = self.syn_image_dataset[index]
-        _, real_img_path, _ = self.real_image_dataset[random.randint(0, len(self.target)-1)]
+        _, real_img_path, _ = self.real_image_dataset[random.randint(0, len(self.real_image_dataset)-1)]
         syn_img = Image.open(syn_img_path)
         real_img = Image.open(real_img_path)
         if self.transform is not None:
