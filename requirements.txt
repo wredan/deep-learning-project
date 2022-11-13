@@ -3,6 +3,6 @@ pytorch-lightning
 torchvision
 torchsummary
 wget
+opencv-python==4.5.5.64
 fiftyone
 progressbar
-opencv-python==4.5.5.64
