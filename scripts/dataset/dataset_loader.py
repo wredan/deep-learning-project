@@ -27,7 +27,7 @@ class CulturalSiteDatasetsLoader():
 
     def _get_main_datasets(self, download_path, zip_file_path): # download and extract dataset
         if not self._main_datasets_zip_exists(zip_file_path):
-            print("Zip file dataset not found. Pulling from resource(", download_path, ")...")
+            print("Zip file dataset not found. Pulling from resource (", download_path, ") ...")
             bar.start()
             wget.download(download_path, os.path.join(os.getcwd(), ""), bar=bar_progress)
             bar.finish()

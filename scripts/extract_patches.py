@@ -15,9 +15,12 @@ class ExtractPatches():
     def extract_database(self, image_sub_path):
          # The path to the source images
         image_path = os.path.join(self.main_path, image_sub_path)
+        print(image_path)
 
         # The path to the COCO labels JSON file
-        labels_path = os.path.join(self.main_path, image_sub_path, "/annotations.json") 
+        labels_path = os.path.join(self.main_path, image_sub_path, "annotations.json") 
+        print(image_sub_path)
+        print()
 
         # delete if exist
         self.delete_dataset(image_sub_path)
@@ -36,17 +39,17 @@ class ExtractPatches():
         # dataset_type=fo.types.FiftyOneImageClassificationDataset, patch dentro la cartella "data" + labels.json
         # dataset_type=fo.types.ImageClassificationDirectoryTree, divide per cartelle le patch in base alla classe
         patches.export(
-            export_dir=self.save_path + image_sub_path,
+            export_dir=os.path.join(self.save_path, image_sub_path),
             dataset_type=fo.types.FiftyOneImageClassificationDataset,
             label_field="ground_truth",
         )
 
     def extract(self):
-        self.extract_database("real/test")
-        self.extract_database("real/training")
-        self.extract_database("syntehtic/training")
-        self.extract_database("syntehtic/validation")
-        self.extract_database("syntehtic/test")      
+        self.extract_database(os.path.join("real", "test"))
+        self.extract_database(os.path.join("real", "training"))
+        self.extract_database(os.path.join("syntehtic", "training"))
+        self.extract_database(os.path.join("syntehtic", "validation"))
+        self.extract_database(os.path.join("syntehtic", "test"))      
 
             
 
