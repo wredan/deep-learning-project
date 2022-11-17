@@ -45,8 +45,8 @@ class CustomResNetModule(pl.LightningModule):
         loss = self.loss_fn(preds, y)
         self.train_acc(torch.argmax(preds, dim=1), y)
         
-        self.log('train_loss', loss.item(), on_epoch=True)
-        self.log('train_acc', self.train_acc, on_epoch=True)
+        self.log('training/loss', loss.item(), on_epoch=True)
+        self.log('training/accuracy', self.train_acc, on_epoch=True)
         
         return loss
     
@@ -56,12 +56,12 @@ class CustomResNetModule(pl.LightningModule):
         loss = self.loss_fn(preds, y)
         self.val_acc(torch.argmax(preds, dim=1), y)
         
-        self.log('val_loss', loss.item(), on_epoch=True)
-        self.log('val_acc', self.val_acc, on_epoch=True)
+        self.log('validation/loss', loss.item(), on_epoch=True)
+        self.log('validation/accuracy', self.val_acc, on_epoch=True)
         
     def test_step(self, batch, batch_idx):        
         x,y = batch
         preds = self.forward(x)
         self.test_acc(torch.argmax(preds, dim=1), y)
         
-        self.log('test_acc', self.test_acc, on_epoch=True)
+        self.log('test/accuracy', self.test_acc, on_epoch=True)
