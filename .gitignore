@@ -134,3 +134,4 @@ EGO-CH-OBJ-ADAPT/
 CLASS-EGO-CH-OBJ-ADAPT/
 *.zip
 tb_logs/**
+bot_data.json
