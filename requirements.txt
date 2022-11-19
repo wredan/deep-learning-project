@@ -2,6 +2,7 @@ torch
 pytorch-lightning
 torchvision
 torchsummary
+torchmetrics
 wget
 opencv-python==4.5.5.64
 fiftyone
