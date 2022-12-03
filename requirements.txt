@@ -1,9 +1,9 @@
-torch
-pytorch-lightning
-torchvision
+torch==1.13.0+cu117
+pytorch-lightning==1.8.0
+torchvision==0.14.0+cu117
 torchsummary
-torchmetrics
-wget
+torchmetrics==0.10.2
+wget>=3.2
 opencv-python==4.5.5.64
-fiftyone
-progressbar
+fiftyone==0.16.6
+progressbar==2.5
