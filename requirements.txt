@@ -1,7 +1,7 @@
-torch==1.13.0+cu117
+torch==1.13.0
 pytorch-lightning==1.8.0
-torchvision==0.14.0+cu117
-torchsummary
+torchvision==0.14.0
+torchsummary==1.5.1
 torchmetrics==0.10.2
 wget>=3.2
 opencv-python==4.5.5.64
