@@ -27,11 +27,7 @@ class CustomResNetModule(pl.LightningModule):
         
         self.train_acc = torchmetrics.Accuracy()
         self.val_acc = torchmetrics.Accuracy()
-
         self.test_acc = torchmetrics.Accuracy()
-        self.test_f1 = torchmetrics.F1Score(num_classes=self.hparams.num_classes)
-        self.test_precision = torchmetrics.Precision(num_classes=self.hparams.num_classes)
-        self.test_recall = torchmetrics.Recall(num_classes=self.hparams.num_classes)
 
     def forward(self, x):
         # features extraction and reshaping to 1-dim array
@@ -69,13 +65,4 @@ class CustomResNetModule(pl.LightningModule):
 
         self.test_acc(torch.argmax(preds, dim=1), y)        
         self.log('test/accuracy', self.test_acc, on_epoch=True)
-
-        self.test_precision(torch.argmax(preds, dim=1), y)
-        self.log('test/precision', self.test_precision, on_epoch=True)
-
-        self.test_recall(torch.argmax(preds, dim=1), y)
-        self.log('test/recall', self.test_recall, on_epoch=True)
-
-        self.test_f1(torch.argmax(preds, dim=1), y)
-        self.log('test/f1_score', self.test_f1, on_epoch=True)
         
