@@ -34,10 +34,6 @@ class ExtractPatches():
         )
 
         patches = dataset.to_patches("ground_truth")
-
-        # https://voxel51.com/docs/fiftyone/api/fiftyone.types.dataset_types.html
-        # dataset_type=fo.types.FiftyOneImageClassificationDataset, patch dentro la cartella "data" + labels.json
-        # dataset_type=fo.types.ImageClassificationDirectoryTree, divide per cartelle le patch in base alla classe
         patches.export(
             export_dir=os.path.join(self.save_path, image_sub_path),
             dataset_type=fo.types.FiftyOneImageClassificationDataset,
