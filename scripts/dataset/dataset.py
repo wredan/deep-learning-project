@@ -52,7 +52,7 @@ class CulturalSiteDataset(VisionDataset):
         tmp = [x for x in self.image_dataset if self.__check_filter_size(x[1], pixel_threshold)]
         self.image_dataset = np.array(tmp)
 
-    def resize_dataset(self, min_size):  # TODO: da rimuovere, non utilizzato
+    def resize_dataset(self, min_size):
         resized_dataset = []     
         for el in self.image_dataset:
             img = Image.open(el[1])

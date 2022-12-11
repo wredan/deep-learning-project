@@ -5,7 +5,7 @@ class Discriminator(nn.Module):
     def __init__(self, input_nc):
         super(Discriminator, self).__init__()
 
-        # Diversi layer di convoluzione. In questo caso usiamo le LeakyReLU invece delle ReLU
+        # Different colvolution layers. In this case we use LeakyReLU rather than ReLU
         model = [   nn.Conv2d(input_nc, 64, 4, stride=2, padding=1),
                     nn.LeakyReLU(0.2, inplace=True) ]
 
@@ -21,7 +21,7 @@ class Discriminator(nn.Module):
                     nn.InstanceNorm2d(512), 
                     nn.LeakyReLU(0.2, inplace=True) ]
 
-        # Layer di classificazione
+        # Classification Layer
         model += [nn.Conv2d(512, 1, 4, padding=1)]
 
         self.model = nn.Sequential(*model)

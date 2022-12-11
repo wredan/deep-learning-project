@@ -10,12 +10,12 @@ class LambdaLR(): # leaning rate decay
 
 def weights_init_normal(m):
     classname = m.__class__.__name__
-    # Inizializziamo le convoluzioni con rumore gaussiano
-    # di media zero e deviazione standard 0.02
+    # Initialize convolutional layers with Gaussian noise
+    # with mean zero and standard deviation 0.02
     if classname.find('Conv') != -1:
         m.weight.data.normal_(0.0, 0.02)
-    # Nel caso della batchnorm2d useremo media 1 e deviazione standard 0.02
+    # In the case of batchnorm2d we will use mean 1 and standard deviation 0.02
     elif classname.find('BatchNorm2d') != -1:
         m.weight.data.normal_(1.0, 0.02)
-        # il bias è costante e pari a zero
+        # the bias is constant and equal to zero
         m.bias.data.fill_(0.0)

@@ -24,12 +24,10 @@ class CulturalSiteDataModuleGAN(pl.LightningDataModule):
     def setup(self, stage=ALL_STAGE):
         if stage==CulturalSiteDataModuleGAN.FIT_STAGE or stage==CulturalSiteDataModuleGAN.ALL_STAGE:
             train_transform = transforms.Compose([
-                transforms.Resize(256, transforms.InterpolationMode.BICUBIC), #ridimensioniamo a una dimensione più grande di quella di input
-                transforms.RandomCrop(224), #random crop alla dimensione di input
-                transforms.RandomHorizontalFlip(), #random flip orizzontale
-                transforms.ToTensor(), #trasformiamo in tensore
-                #? applichiamo la normalizzazione (detto dal prof furnari: solitamente quando si usano le GAN non si fanno grosse assunzioni, 
-                #? va bene lasciare una media e std intorno ai volori 0.5 sotto proposti)
+                transforms.Resize(256, transforms.InterpolationMode.BICUBIC),
+                transforms.RandomCrop(224),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
                 transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5))
             ])
 

@@ -16,7 +16,6 @@ class CulturalSiteDatasetGAN(Dataset):
     def __init__(self, dataset_base_path, transform: Optional[Callable] = None, mode= TRAIN) -> None:
         self.transform = transform
 
-        # ottieni i path delle immagini in A e B
         self.images_path_syn = sorted(glob.glob(os.path.join(dataset_base_path, CulturalSiteDatasetGAN.SYNTHETIC, '%s' % mode, 'data') + '/*.*'))
         self.images_path_real = sorted(glob.glob(os.path.join(dataset_base_path, CulturalSiteDatasetGAN.REAL, '%s' % mode, 'data') + '/*.*'))
 
@@ -31,9 +30,7 @@ class CulturalSiteDatasetGAN(Dataset):
         self.images_path_real = tmp
 
     def __getitem__(self, index: int):
-        #apro l'iesima immagine A (uso il modulo per evitare di sforare)
         item_A = Image.open(self.images_path_syn[index % len(self.images_path_syn)])
-        #apro una immagine B a caso
         item_B = Image.open(self.images_path_real[random.randint(0, len(self.images_path_real) - 1)])
         
         if self.transform is not None:

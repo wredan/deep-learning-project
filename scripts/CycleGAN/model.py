@@ -139,7 +139,7 @@ class CycleGAN(pl.LightningModule):
             pred_fake = self.netD_A(fake_A.detach())
             loss_D_fake = self.criterion_GAN(pred_fake, target_fake)
 
-            # loss globale
+            # global loss
             loss_D_A = (loss_D_real + loss_D_fake)*0.5
             self.log('loss_D/loss_D_A',loss_D_A, on_epoch=True)
             return loss_D_A
@@ -154,7 +154,7 @@ class CycleGAN(pl.LightningModule):
             pred_fake = self.netD_B(fake_B.detach())
             loss_D_fake = self.criterion_GAN(pred_fake, target_fake)
 
-            # loss globale
+            # global loss
             loss_D_B = (loss_D_real + loss_D_fake)*0.5
             self.log('loss_D/loss_D_B', loss_D_B, on_epoch=True)
             return loss_D_B
