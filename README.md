@@ -42,6 +42,8 @@ Install requirements by running (python3 and pip3 required):
   $ pip3 install -r ./requirements.txt
 ```
 
+To run the notebook you should install <b>jupyter notebook</b> from [here](https://jupyter.org/install) or by install [anaconda environment](https://www.anaconda.com/). Alternately you can install and enable [jupyter plugin](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) in [Visual Studio Code](https://code.visualstudio.com/).  
+
 ---------------
 
 ## Using scripts
